@@ -1,0 +1,20 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+
+COPY src/frontend/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY src/__init__.py ./src/
+COPY src/frontend/ ./src/frontend/
+
+ENV API_BASE_URL=http://localhost:8000
+ENV UI_CPU_THREADS_MIN=1
+ENV UI_CPU_THREADS_MAX=64
+ENV UI_CPU_THREADS_DEFAULT=32
+
+EXPOSE 8501
+
+HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health || exit 1
+
+CMD ["streamlit", "run", "src/frontend/app.py", "--server.port=8501", "--server.address=0.0.0.0"]

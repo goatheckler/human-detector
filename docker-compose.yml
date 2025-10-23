@@ -1,0 +1,34 @@
+services:
+  backend:
+    image: human-detector-backend
+    build:
+      context: .
+      dockerfile: src/backend/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - HUMAN_DETECTOR_MODEL_SIZE=yolo11n.pt
+      - HUMAN_DETECTOR_CONFIDENCE_THRESHOLD=0.45
+      - HUMAN_DETECTOR_SUPPORTED_DEVICES=["cpu"]
+      - HUMAN_DETECTOR_CPU_THREADS=32
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    image: human-detector-frontend
+    build:
+      context: .
+      dockerfile: src/frontend/Dockerfile
+    ports:
+      - "8501:8501"
+    environment:
+      - API_BASE_URL=http://backend:8000
+      - UI_CPU_THREADS_MIN=1
+      - UI_CPU_THREADS_MAX=64
+      - UI_CPU_THREADS_DEFAULT=32
+    depends_on:
+      backend:
+        condition: service_healthy
