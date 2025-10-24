@@ -21,13 +21,33 @@ detection_service = HumanDetectionService(
 
 
 @app.post("/detect", response_model=DetectionResponse)
-async def detect_humans(
+async def detect_humans_json(request: DetectionRequest) -> DetectionResponse:
+    """
+    Detect humans in an image using YOLO11 (JSON API).
+    
+    - **image_data**: Base64-encoded image data
+    - **device**: Device to use for inference ('cpu' or 'gpu'). Defaults to 'gpu'
+    - **cpu_threads**: Number of CPU threads (optional, uses server default if not specified)
+    - Returns bounding boxes for all detected humans with confidence scores
+    """
+    try:
+        return detection_service.detect_humans(
+            request.image_data,
+            request.device,
+            request.cpu_threads
+        )
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/detect/upload", response_model=DetectionResponse)
+async def detect_humans_upload(
     image: UploadFile = File(...),
     device: str = Form("cpu"),
     cpu_threads: Optional[int] = Form(None)
 ) -> DetectionResponse:
     """
-    Detect humans in an image using YOLO11.
+    Detect humans in an image using YOLO11 (file upload API).
     
     - **image**: Image file (JPEG, PNG, GIF, WebP, BMP, TIFF)
     - **device**: Device to use for inference ('cpu' or 'gpu'). Defaults to 'cpu'

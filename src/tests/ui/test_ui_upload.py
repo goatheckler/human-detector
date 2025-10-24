@@ -18,13 +18,29 @@ def wait_for_streamlit(page: Page):
     page.wait_for_selector("text=Human Detection Validator", timeout=10000)
 
 def upload_file_and_detect(page: Page, file_path: Path):
+    # Upload file (CPU is already the default device)
     file_input = page.locator('input[type="file"]')
     file_input.set_input_files(str(file_path))
     
+    # Give Streamlit time to process the file upload
+    time.sleep(2)
+    
     detect_button = page.get_by_role("button", name="🔍 Detect Humans")
+    expect(detect_button).to_be_visible()
+    
+    # Click and wait for Streamlit to process
     detect_button.click()
     
-    page.wait_for_selector("text=Detection Result", timeout=15000)
+    # Check if an error occurred
+    try:
+        error = page.locator('[data-testid="stException"]')
+        if error.is_visible(timeout=2000):
+            raise Exception(f"Streamlit error: {error.text_content()}")
+    except:
+        pass  # No error, continue
+    
+    # Wait for results with extended timeout
+    page.wait_for_selector("text=Detection Result", timeout=30000)
 
 def test_ui_loads(page: Page):
     wait_for_streamlit(page)

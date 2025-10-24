@@ -12,7 +12,7 @@ class DetectionRequest(APIModel):
         description="Base64-encoded image data. Supported formats: JPEG, PNG, GIF, WebP, BMP, TIFF"
     )
     device: DeviceType = Field(
-        default=DeviceType.GPU,
+        default=DeviceType.CPU,
         description="Device to use for inference: 'cpu' or 'cuda' (GPU)"
     )
     cpu_threads: Optional[int] = Field(

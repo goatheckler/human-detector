@@ -65,7 +65,7 @@ st.header("Upload Your Image")
 
 device_option = st.selectbox(
     "Select Device",
-    ["cuda", "cpu"],
+    ["cpu", "cuda"],
     index=0,
     help="Choose whether to run inference on GPU (cuda) or CPU"
 )
@@ -92,10 +92,22 @@ if uploaded_file:
         image_bytes = uploaded_file.read()
         image = Image.open(io.BytesIO(image_bytes))
         
+        # Initialize session state for results
+        if "result" not in st.session_state:
+            st.session_state.result = None
+            st.session_state.elapsed_time = None
+            st.session_state.result_image = None
+        
         if st.button("🔍 Detect Humans", type="primary", use_container_width=True):
             with st.spinner("Processing..."):
                 image_base64 = encode_image(image_bytes)
                 result, elapsed_time = call_detection_api(image_base64, device=device_option, cpu_threads=cpu_threads)
-                display_result(result, image, elapsed_time)
+                st.session_state.result = result
+                st.session_state.elapsed_time = elapsed_time
+                st.session_state.result_image = image
+        
+        # Display results if they exist in session state
+        if st.session_state.result is not None and st.session_state.result_image is not None:
+            display_result(st.session_state.result, st.session_state.result_image, st.session_state.elapsed_time)
     except Exception as e:
         st.error(f"Error: {str(e)}")
