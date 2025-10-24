@@ -43,15 +43,24 @@ jobs:
       run: |
         cd src/frontend
         pip install -r requirements.txt
-        export API_BASE_URL=http://localhost:8000
         nohup streamlit run app.py --server.port 8501 --server.headless true > frontend.log 2>&1 &
         echo $! > frontend.pid
         sleep 10
+      env:
+        API_BASE_URL: http://localhost:8000
     
     - name: Run tests
       run: |
         cd src/tests
         pytest -v
+    
+    - name: Print logs on failure
+      if: failure()
+      run: |
+        echo "=== Backend logs ==="
+        cat backend.log || echo "No backend log"
+        echo "=== Frontend logs ==="
+        cat frontend.log || echo "No frontend log"
     
     - name: Cleanup
       if: always()
