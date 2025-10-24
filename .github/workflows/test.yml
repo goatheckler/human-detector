@@ -33,16 +33,15 @@ jobs:
     
     - name: Start backend API
       run: |
-        cd src/backend
-        pip install -r requirements.txt
-        nohup uvicorn src.backend.api.main:app --host 0.0.0.0 --port 8000 > ../../backend.log 2>&1 &
-        echo $! > ../../backend.pid
+        pip install -r src/backend/requirements.txt
+        nohup uvicorn src.backend.api.main:app --host 0.0.0.0 --port 8000 > backend.log 2>&1 &
+        echo $! > backend.pid
         sleep 5
     
     - name: Start frontend
       run: |
+        pip install -r src/frontend/requirements.txt
         cd src/frontend
-        pip install -r requirements.txt
         nohup streamlit run app.py --server.port 8501 --server.headless true > ../../frontend.log 2>&1 &
         echo $! > ../../frontend.pid
         sleep 10
