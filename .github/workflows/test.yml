@@ -31,7 +31,29 @@ jobs:
     - name: Install Playwright browsers
       run: playwright install --with-deps chromium
     
+    - name: Start backend API
+      run: |
+        cd src/backend
+        pip install -r requirements.txt
+        nohup uvicorn src.backend.api.main:app --host 0.0.0.0 --port 8000 > backend.log 2>&1 &
+        echo $! > backend.pid
+        sleep 5
+    
+    - name: Start frontend
+      run: |
+        cd src/frontend
+        pip install -r requirements.txt
+        nohup streamlit run app.py --server.port 8501 --server.headless true > frontend.log 2>&1 &
+        echo $! > frontend.pid
+        sleep 10
+    
     - name: Run tests
       run: |
         cd src/tests
         pytest -v
+    
+    - name: Cleanup
+      if: always()
+      run: |
+        if [ -f backend.pid ]; then kill $(cat backend.pid) || true; fi
+        if [ -f frontend.pid ]; then kill $(cat frontend.pid) || true; fi

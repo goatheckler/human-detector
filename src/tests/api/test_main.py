@@ -22,8 +22,15 @@ def test_health_check():
 
 
 def test_detect_endpoint_valid_image():
-    test_image = create_test_image()
-    response = client.post("/detect", json={"image_data": test_image, "device": "cpu"})
+    img = np.zeros((100, 100, 3), dtype=np.uint8)
+    _, buffer = cv2.imencode('.jpg', img)
+    image_bytes = buffer.tobytes()
+    
+    response = client.post(
+        "/detect",
+        files={"image": ("test.jpg", image_bytes, "image/jpeg")},
+        data={"device": "cpu"}
+    )
     
     assert response.status_code == 200
     data = response.json()
@@ -36,11 +43,22 @@ def test_detect_endpoint_valid_image():
 
 
 def test_detect_endpoint_invalid_base64():
-    response = client.post("/detect", json={"image_data": "invalid!@#$", "device": "cpu"})
-    assert response.status_code == 422
+    response = client.post(
+        "/detect",
+        files={"image": ("test.txt", b"invalid!@#$", "text/plain")},
+        data={"device": "cpu"}
+    )
+    assert response.status_code == 400
 
 
 def test_detect_endpoint_explicit_gpu():
-    test_image = create_test_image()
-    response = client.post("/detect", json={"image_data": test_image, "device": "cuda"})
+    img = np.zeros((100, 100, 3), dtype=np.uint8)
+    _, buffer = cv2.imencode('.jpg', img)
+    image_bytes = buffer.tobytes()
+    
+    response = client.post(
+        "/detect",
+        files={"image": ("test.jpg", image_bytes, "image/jpeg")},
+        data={"device": "gpu"}
+    )
     assert response.status_code in [200, 400]
