@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  backend:
+    image: thefnordling/human-detector-backend:${VERSION:-latest}
+    networks:
+      human-net:
+        aliases:
+          - backend.human-net
+    environment:
+      - HUMAN_DETECTOR_MODEL_SIZE=yolo11n.pt
+      - HUMAN_DETECTOR_CONFIDENCE_THRESHOLD=0.45
+      - HUMAN_DETECTOR_SUPPORTED_DEVICES=["cpu"]
+      - HUMAN_DETECTOR_CPU_THREADS=32
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+        order: start-first
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+
+  frontend:
+    image: thefnordling/human-detector-frontend:${VERSION:-latest}
+    networks:
+      human-net:
+        aliases:
+          - frontend.human-net
+    environment:
+      - API_BASE_URL=http://backend.human-net:8000
+      - UI_CPU_THREADS_MIN=1
+      - UI_CPU_THREADS_MAX=64
+      - UI_CPU_THREADS_DEFAULT=32
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+        order: start-first
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+
+networks:
+  human-net:
+    driver: overlay
+    attachable: true
