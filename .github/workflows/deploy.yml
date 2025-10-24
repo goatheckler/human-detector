@@ -1,0 +1,51 @@
+name: Deploy
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    
+    - name: Extract version from tag
+      id: version
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/v}
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Deploying version: $VERSION"
+    
+    - name: Build and push backend image
+      run: |
+        docker build -t thefnordling/human-detector-backend:${{ steps.version.outputs.version }} \
+                     -t thefnordling/human-detector-backend:latest \
+                     -f src/backend/Dockerfile .
+        docker push thefnordling/human-detector-backend:${{ steps.version.outputs.version }}
+        docker push thefnordling/human-detector-backend:latest
+    
+    - name: Build and push frontend image
+      run: |
+        docker build -t thefnordling/human-detector-frontend:${{ steps.version.outputs.version }} \
+                     -t thefnordling/human-detector-frontend:latest \
+                     -f src/frontend/Dockerfile .
+        docker push thefnordling/human-detector-frontend:${{ steps.version.outputs.version }}
+        docker push thefnordling/human-detector-frontend:latest
+    
+    - name: Deploy to Docker Swarm
+      run: |
+        VERSION=${{ steps.version.outputs.version }} docker stack deploy -c docker-stack.yml human-detector
+    
+    - name: Show deployment status
+      run: |
+        echo "Waiting for services to start..."
+        sleep 5
+        docker stack services human-detector
