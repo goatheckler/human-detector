@@ -18,10 +18,7 @@ def wait_for_streamlit(page: Page):
     page.wait_for_selector("text=Human Detection Validator", timeout=10000)
 
 def upload_file_and_detect(page: Page, file_path: Path):
-    # Ensure CPU device is selected (should be default, but let's be explicit)
-    device_select = page.locator('label:has-text("Select Device")').locator('..').locator('select')
-    device_select.select_option("cpu")
-    
+    # Upload file (CPU is already the default device)
     file_input = page.locator('input[type="file"]')
     file_input.set_input_files(str(file_path))
     
