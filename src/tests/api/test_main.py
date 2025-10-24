@@ -27,7 +27,7 @@ def test_detect_endpoint_valid_image():
     image_bytes = buffer.tobytes()
     
     response = client.post(
-        "/detect",
+        "/detect/upload",
         files={"image": ("test.jpg", image_bytes, "image/jpeg")},
         data={"device": "cpu"}
     )
@@ -44,7 +44,7 @@ def test_detect_endpoint_valid_image():
 
 def test_detect_endpoint_invalid_base64():
     response = client.post(
-        "/detect",
+        "/detect/upload",
         files={"image": ("test.txt", b"invalid!@#$", "text/plain")},
         data={"device": "cpu"}
     )
@@ -57,7 +57,7 @@ def test_detect_endpoint_explicit_gpu():
     image_bytes = buffer.tobytes()
     
     response = client.post(
-        "/detect",
+        "/detect/upload",
         files={"image": ("test.jpg", image_bytes, "image/jpeg")},
         data={"device": "gpu"}
     )
