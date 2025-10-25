@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     confidence_threshold: float = 0.5
     supported_devices: List[DeviceType] = [DeviceType.CPU, DeviceType.GPU]
     cpu_threads: int = CPU_THREADS_DEFAULT
+    root_path: str = ""
     
     @field_validator('cpu_threads')
     @classmethod

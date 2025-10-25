@@ -10,7 +10,8 @@ from typing import Optional
 app = FastAPI(
     title="Human Detection API", 
     version="1.0.0",
-    response_model_by_alias=True
+    response_model_by_alias=True,
+    root_path=settings.root_path
 )
 
 detection_service = HumanDetectionService(
