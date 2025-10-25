@@ -44,8 +44,6 @@ jobs:
       run: |
         export VERSION=${{ steps.version.outputs.version }}
         docker stack deploy -c docker-stack.yml human-detector
-        docker service update --force --image thefnordling/human-detector-backend:${{ steps.version.outputs.version }} human-detector_backend
-        docker service update --force --image thefnordling/human-detector-frontend:${{ steps.version.outputs.version }} human-detector_frontend
     
     - name: Show deployment status
       run: |
