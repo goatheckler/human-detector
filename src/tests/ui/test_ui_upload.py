@@ -15,7 +15,7 @@ def browser_context_args(browser_context_args):
 
 def wait_for_streamlit(page: Page):
     page.goto(UI_URL)
-    page.wait_for_selector("text=Human Detection Validator", timeout=10000)
+    page.wait_for_selector("text=Human Detector", timeout=10000)
 
 def upload_file_and_detect(page: Page, file_path: Path):
     # Upload file (CPU is already the default device)
@@ -44,7 +44,7 @@ def upload_file_and_detect(page: Page, file_path: Path):
 
 def test_ui_loads(page: Page):
     wait_for_streamlit(page)
-    expect(page.locator("text=Human Detection Validator")).to_be_visible()
+    expect(page.locator("text=Human Detector")).to_be_visible()
     expect(page.locator("text=Upload Your Image")).to_be_visible()
 
 def test_upload_image_without_humans_gradient(page: Page):
