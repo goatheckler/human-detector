@@ -3,7 +3,10 @@ from fastapi.testclient import TestClient
 import base64
 import numpy as np
 import cv2
+import os
 from src.backend.api.main import app
+
+os.environ['HUMAN_DETECTOR_ROOT_PATH'] = ''
 
 
 def create_test_image() -> str:
