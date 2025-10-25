@@ -37,7 +37,7 @@ services:
         aliases:
           - frontend.human-net
     environment:
-      - API_BASE_URL=http://backend.human-net:8000
+      - API_BASE_URL=https://humans.goatheckler.com/api
       - UI_CPU_THREADS_MIN=1
       - UI_CPU_THREADS_MAX=64
       - UI_CPU_THREADS_DEFAULT=32
@@ -55,5 +55,4 @@ services:
 
 networks:
   human-net:
-    driver: overlay
-    attachable: true
+    external: true
