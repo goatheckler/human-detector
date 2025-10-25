@@ -1,0 +1,36 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "semanticCommits": "enabled",
+  "semanticCommitType": "fix",
+  "semanticCommitScope": "deps",
+  "timezone": "UTC",
+  "rangeStrategy": "bump",
+  "separateMinorPatch": false,
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 0,
+  "automerge": true,
+  "automergeType": "pr",
+  "automergeStrategy": "squash",
+  "platformAutomerge": false,
+  "ignoreTests": false,
+  "dependencyDashboard": true,
+  "labels": ["dependencies", "auto-release"],
+  "packageRules": [
+    {
+      "description": "Auto-merge non-major updates that pass tests",
+      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "automerge": true,
+      "groupName": "all dependencies"
+    },
+    {
+      "description": "Require manual approval for major updates via Dependency Dashboard",
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true,
+      "automerge": false,
+      "groupName": "major dependencies"
+    }
+  ]
+}
