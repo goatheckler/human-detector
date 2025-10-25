@@ -8,7 +8,7 @@ services:
         aliases:
           - backend.human-net
     environment:
-      - HUMAN_DETECTOR_MODEL_SIZE=XLARGE
+      - HUMAN_DETECTOR_MODEL_SIZE=yolo11x.pt
       - HUMAN_DETECTOR_CONFIDENCE_THRESHOLD=0.45
       - HUMAN_DETECTOR_SUPPORTED_DEVICES=["cpu"]
       - HUMAN_DETECTOR_CPU_THREADS=32
@@ -20,7 +20,7 @@ services:
       retries: 5
       start_period: 30s
     deploy:
-      replicas: 2
+      replicas: 1
       update_config:
         parallelism: 1
         delay: 10s
@@ -43,7 +43,7 @@ services:
       - UI_CPU_THREADS_MAX=64
       - UI_CPU_THREADS_DEFAULT=32
     deploy:
-      replicas: 2
+      replicas: 1
       update_config:
         parallelism: 1
         delay: 10s
