@@ -14,7 +14,7 @@ CPU_THREADS_MIN = int(os.getenv("UI_CPU_THREADS_MIN", "1"))
 CPU_THREADS_MAX = int(os.getenv("UI_CPU_THREADS_MAX", "64"))
 CPU_THREADS_DEFAULT = int(os.getenv("UI_CPU_THREADS_DEFAULT", "32"))
 
-st.title("👤 Human Detection Validator")
+st.title("👤 Human Detector")
 st.markdown(f"**API Endpoint:** `{API_BASE_URL}`")
 
 def encode_image(image_bytes: bytes) -> str:
