@@ -12,6 +12,7 @@ services:
       - HUMAN_DETECTOR_CONFIDENCE_THRESHOLD=0.45
       - HUMAN_DETECTOR_SUPPORTED_DEVICES=["cpu"]
       - HUMAN_DETECTOR_CPU_THREADS=32
+      - HUMAN_DETECTOR_ROOT_PATH=/api
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 10s
