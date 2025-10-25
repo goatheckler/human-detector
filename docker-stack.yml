@@ -8,7 +8,7 @@ services:
         aliases:
           - backend.human-net
     environment:
-      - HUMAN_DETECTOR_MODEL_SIZE=yolo11n.pt
+      - HUMAN_DETECTOR_MODEL_SIZE=XLARGE
       - HUMAN_DETECTOR_CONFIDENCE_THRESHOLD=0.45
       - HUMAN_DETECTOR_SUPPORTED_DEVICES=["cpu"]
       - HUMAN_DETECTOR_CPU_THREADS=32
