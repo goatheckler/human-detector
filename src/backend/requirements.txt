@@ -7,5 +7,5 @@ ultralytics>=8.4.7
 numpy==2.4.1
 pytest==8.4.2
 httpx==0.28.1
-python-multipart==0.0.21
+python-multipart==0.0.22
 pytest-playwright==0.7.2
