@@ -21,16 +21,16 @@ def upload_file_and_detect(page: Page, file_path: Path):
     # Upload file (CPU is already the default device)
     file_input = page.locator('input[type="file"]')
     file_input.set_input_files(str(file_path))
-    
+
     # Give Streamlit time to process the file upload
     time.sleep(2)
-    
+
     detect_button = page.get_by_role("button", name="🔍 Detect Humans")
     expect(detect_button).to_be_visible()
-    
+
     # Click and wait for Streamlit to process
     detect_button.click()
-    
+
     # Check if an error occurred
     try:
         error = page.locator('[data-testid="stException"]')
@@ -38,9 +38,10 @@ def upload_file_and_detect(page: Page, file_path: Path):
             raise Exception(f"Streamlit error: {error.text_content()}")
     except:
         pass  # No error, continue
-    
-    # Wait for results with extended timeout
-    page.wait_for_selector("text=Detection Result", timeout=30000)
+
+    # Wait for the specific result element (st.info/st.success renders after subheader)
+    # Use the metric text as a reliable proxy for "results have rendered"
+    expect(page.locator("text=Max Confidence")).to_be_visible(timeout=30000)
 
 def test_ui_loads(page: Page):
     wait_for_streamlit(page)
@@ -49,26 +50,28 @@ def test_ui_loads(page: Page):
 
 def test_upload_image_without_humans_gradient(page: Page):
     wait_for_streamlit(page)
-    
+
     image_path = FIXTURES_DIR / "without_humans" / "gradient.jpg"
     upload_file_and_detect(page, image_path)
-    
-    expect(page.locator("text=❌ No Human Detected")).to_be_visible()
-    expect(page.locator("text=0.00%")).to_be_visible()
+
+    # The emoji may render as an img tag — match only the text portion
+    expect(page.locator("text=No Human Detected")).to_be_visible(timeout=30000)
+    expect(page.locator("text=0.00%")).to_be_visible(timeout=30000)
 
 def test_upload_stick_figure_not_detected(page: Page):
     wait_for_streamlit(page)
-    
+
     image_path = FIXTURES_DIR / "with_humans" / "stick_figure.jpg"
     upload_file_and_detect(page, image_path)
-    
-    expect(page.locator("text=❌ No Human Detected")).to_be_visible()
+
+    # The emoji may render as an img tag — match only the text portion
+    expect(page.locator("text=No Human Detected")).to_be_visible(timeout=30000)
 
 def test_timing_metric_displayed(page: Page):
     wait_for_streamlit(page)
-    
+
     image_path = FIXTURES_DIR / "without_humans" / "gradient.jpg"
     upload_file_and_detect(page, image_path)
-    
+
     expect(page.locator("text=Analysis Time")).to_be_visible()
     expect(page.locator("text=/\\d+ms/")).to_be_visible()

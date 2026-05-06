@@ -2,7 +2,7 @@ name: Tests
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ main, renovate/all-dependencies ]
 
 jobs:
   test:
@@ -14,24 +14,23 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.14.3'
-    
-    - name: Install system dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libgl1-mesa-glx libglib2.0-0
+        python-version: '3.14.4'
     
     - name: Install dependencies
       run: |
-        cd src/tests
-        pip install -r requirements.txt
+        # Install test requirements first (pytest==8.4.2)
+        pip install -r src/tests/requirements.txt
+        # Strip pytest packages from backend requirements (they conflict with pytest==8.4.2;
+        # testing deps belong in test requirements, not production backend requirements)
+        grep -v -E '^pytest' src/backend/requirements.txt > /tmp/backend-reqs.txt
+        pip install -r /tmp/backend-reqs.txt
+        pip install -r src/frontend/requirements.txt
     
     - name: Install Playwright browsers
       run: playwright install --with-deps chromium
     
     - name: Start backend API
       run: |
-        pip install -r src/backend/requirements.txt
         nohup uvicorn src.backend.api.main:app --host 0.0.0.0 --port 8000 > backend.log 2>&1 &
         echo $! > backend.pid
         sleep 5
@@ -54,8 +53,16 @@ jobs:
     
     - name: Run tests
       run: |
-        cd src/tests
-        pytest -v
+        export PYTHONPATH="$GITHUB_WORKSPACE"
+        pytest -v --tb=short --junit-xml=test-results.xml
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: test-results.xml
+        retention-days: 1
     
     - name: Print logs on failure
       if: failure()
