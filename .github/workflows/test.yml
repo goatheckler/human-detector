@@ -18,8 +18,13 @@ jobs:
     
     - name: Install dependencies
       run: |
-        cd src/tests
-        pip install -r requirements.txt
+        # Install test requirements first (pytest==8.4.2)
+        pip install -r src/tests/requirements.txt
+        # Strip pytest packages from backend requirements (they conflict with pytest==8.4.2;
+        # testing deps belong in test requirements, not production backend requirements)
+        grep -v -E '^pytest' src/backend/requirements.txt > /tmp/backend-reqs.txt
+        pip install -r /tmp/backend-reqs.txt
+        pip install -r src/frontend/requirements.txt
     
     - name: Install Playwright browsers
       run: playwright install --with-deps chromium
@@ -49,8 +54,8 @@ jobs:
     
     - name: Run tests
       run: |
-        cd src/tests
-        pytest -v
+        export PYTHONPATH="$GITHUB_WORKSPACE"
+        pytest -v --tb=short
     
     - name: Print logs on failure
       if: failure()
