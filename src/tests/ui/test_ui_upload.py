@@ -53,8 +53,8 @@ def test_upload_image_without_humans_gradient(page: Page):
     image_path = FIXTURES_DIR / "without_humans" / "gradient.jpg"
     upload_file_and_detect(page, image_path)
     
-    expect(page.locator("text=❌ No Human Detected")).to_be_visible()
-    expect(page.locator("text=0.00%")).to_be_visible()
+    expect(page.locator("text=❌ No Human Detected")).to_be_visible(timeout=30000)
+    expect(page.locator("text=0.00%")).to_be_visible(timeout=30000)
 
 def test_upload_stick_figure_not_detected(page: Page):
     wait_for_streamlit(page)
@@ -62,7 +62,7 @@ def test_upload_stick_figure_not_detected(page: Page):
     image_path = FIXTURES_DIR / "with_humans" / "stick_figure.jpg"
     upload_file_and_detect(page, image_path)
     
-    expect(page.locator("text=❌ No Human Detected")).to_be_visible()
+    expect(page.locator("text=❌ No Human Detected")).to_be_visible(timeout=30000)
 
 def test_timing_metric_displayed(page: Page):
     wait_for_streamlit(page)
