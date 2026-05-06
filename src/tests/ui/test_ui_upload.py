@@ -39,8 +39,9 @@ def upload_file_and_detect(page: Page, file_path: Path):
     except:
         pass  # No error, continue
     
-    # Wait for results with extended timeout
-    page.wait_for_selector("text=Detection Result", timeout=30000)
+    # Wait for the specific result element (st.info/st.success renders after subheader)
+    # Use the metric text as a reliable proxy for "results have rendered"
+    expect(page.locator("text=Max Confidence")).to_be_visible(timeout=30000)
 
 def test_ui_loads(page: Page):
     wait_for_streamlit(page)
