@@ -50,7 +50,15 @@ jobs:
     - name: Run tests
       run: |
         cd src/tests
-        pytest -v
+        pytest -v --tb=short --junit-xml=test-results.xml
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: src/tests/test-results.xml
+        retention-days: 3
     
     - name: Print logs on failure
       if: failure()
