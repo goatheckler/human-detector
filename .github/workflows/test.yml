@@ -33,7 +33,7 @@ jobs:
       run: |
         nohup uvicorn src.backend.api.main:app --host 0.0.0.0 --port 8000 > backend.log 2>&1 &
         echo $! > backend.pid
-        sleep 5
+        sleep 15
     
     - name: Start frontend
       run: |
