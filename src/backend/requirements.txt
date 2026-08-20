@@ -3,7 +3,7 @@ uvicorn[standard]==0.52.4
 pillow==12.3.0
 pydantic==2.13.4
 pydantic-settings==2.15.0
-ultralytics>=8.4.123
+ultralytics>=8.4.124
 numpy==2.5.2
 pytest==8.4.2
 httpx==0.28.1
