@@ -4,7 +4,7 @@ pillow==12.3.0
 pydantic==2.13.5
 pydantic-settings==2.15.0
 ultralytics>=8.4.142
-numpy==2.5.2
+numpy==2.5.3
 pytest==8.4.2
 httpx==0.28.1
 python-multipart==0.0.32
