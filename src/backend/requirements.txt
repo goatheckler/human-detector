@@ -1,9 +1,9 @@
-fastapi==0.141.1
+fastapi==0.142.2
 uvicorn[standard]==0.54.0
 pillow==12.3.0
 pydantic==2.13.5
 pydantic-settings==2.15.0
-ultralytics>=8.4.165
+ultralytics>=8.4.170
 numpy==2.5.3
 pytest==8.4.2
 httpx==0.28.1
