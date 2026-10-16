@@ -27,16 +27,18 @@ jobs:
     - name: Build and push backend image
       run: |
         docker build -t thefnordling/human-detector-backend:${{ steps.version.outputs.version }} \
-                     -t thefnordling/human-detector-backend:latest \
                      -f src/backend/Dockerfile .
+        docker tag thefnordling/human-detector-backend:${{ steps.version.outputs.version }} \
+                   thefnordling/human-detector-backend:latest
         docker push thefnordling/human-detector-backend:${{ steps.version.outputs.version }}
         docker push thefnordling/human-detector-backend:latest
     
     - name: Build and push frontend image
       run: |
         docker build -t thefnordling/human-detector-frontend:${{ steps.version.outputs.version }} \
-                     -t thefnordling/human-detector-frontend:latest \
                      -f src/frontend/Dockerfile .
+        docker tag thefnordling/human-detector-frontend:${{ steps.version.outputs.version }} \
+                   thefnordling/human-detector-frontend:latest
         docker push thefnordling/human-detector-frontend:${{ steps.version.outputs.version }}
         docker push thefnordling/human-detector-frontend:latest
     
