@@ -31,6 +31,12 @@
       "dependencyDashboardApproval": true,
       "automerge": false,
       "groupName": "major dependencies"
+    },
+    {
+      "description": "Hold CI/runtime Python at <=3.14: numpy/pandas/streamlit have no cp315 wheels yet, so Python 3.15 runs die building pandas from source (no compiler on runner)",
+      "matchManagers": ["setup-python", "docker"],
+      "matchDepNames": ["python"],
+      "allowedVersions": "<3.15"
     }
   ]
 }
