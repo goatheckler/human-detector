@@ -27,7 +27,15 @@ jobs:
         pip install -r src/frontend/requirements.txt
     
     - name: Install Playwright browsers
-      run: playwright install --with-deps chromium
+      run: |
+        # playwright's bundled node needs libatomic.so.1; the self-hosted
+        # runner image is missing it, and `--with-deps` cannot bootstrap
+        # past the driver to install it. Pre-install via apt.
+        if command -v apt-get >/dev/null 2>&1; then
+          sudo apt-get update -y
+          sudo apt-get install -y libatomic1
+        fi
+        playwright install --with-deps chromium
     
     - name: Start backend API
       run: |
